@@ -1,6 +1,8 @@
 # AASTeX v7 Paper Template
 
-Local-first LaTeX project template for AAS-journal manuscripts: macOS + VS Code + Zotero, compiling with `latexmk`/`pdflatex` against a vendored AASTeX v7 class.
+Local-first LaTeX project template for AAS-journal manuscripts: macOS, VS Code
+and Zotero 8, compiling with `latexmk`/`pdflatex` against a vendored AASTeX v7
+class.
 
 One-time machine and GUI setup lives in [SETUP.md](SETUP.md).
 
@@ -85,6 +87,14 @@ purpose: the `.aux`/`.bbl` in `build/` are what make incremental builds instant.
 means the **Better BibTeX** exporter, not Better BibLaTeX — BibLaTeX emits
 `date` where BibTeX wants `year`.
 
+**Check a new paper's citation key before you cite it.** Keys are pinned the
+moment BBT writes them, about two seconds after an item lands in Zotero, so the
+key formula gets one shot per item. A paper saved from ADS without an
+`ADS Bibcode:` line in its Extra field keeps an `auth+year` fallback key
+permanently unless you fix Extra and right-click → Better BibTeX → **Refresh**.
+Doing that *after* the key is in `ms.tex` is how you silently break a `\citep{}`
+([SETUP.md](SETUP.md) section 3.3).
+
 **Two `.bib` files, one direction of flow.** Better BibTeX writes
 `references.zotero.bib`; `tools/ads_enrich.py` generates `references.bib` from
 it. Edit neither by hand. Commit both: they are build inputs and the journal
@@ -121,27 +131,6 @@ tool args and in the `-outdir` flag you type.
 
 ---
 
-## Speed knobs
-
-You will probably never need these. In order of payoff:
-
-1. **Draft-mode figures.** Set `\draftfigstrue` in the `ms.tex` preamble and
-   `\includegraphics` emits a labeled box instead of rasterizing. Large win with
-   many multi-MB PNGs. Flip it back before generating a final PDF.
-2. **Downsample draft figures.** Keep originals in `figures/full/`:
-
-   ```bash
-   sips -Z 1200 figures/full/*.png --out figures/
-   ```
-
-3. **Externalize TikZ** if you have non-trivial TikZ: `\usetikzlibrary{external}`
-   + `\tikzexternalize`. Needs `-shell-escape`, so commit the cached PDFs rather
-   than pushing the build step.
-4. **Precompiled preamble** (`mylatexformat`). Marginal at AASTeX scale and a
-   fragile extra build step. Skip it.
-
----
-
 ## Cheatsheet
 
 | Action | Shortcut |
@@ -152,7 +141,7 @@ You will probably never need these. In order of payoff:
 | Reverse search (PDF → source) | `Cmd+Click` in the PDF pane |
 | Show compile log | `Cmd+Opt+L` |
 | Reflow paragraph | `Opt+Q` |
-| Cite from Zotero | `Cmd+Shift+Z` (bind manually, see SETUP.md) |
+| Cite from Zotero | `Opt+Shift+Z` |
 
 Useful one-offs:
 
@@ -185,14 +174,14 @@ article in that list means a bad DOI.
 Vendored deliberately rather than taken from TeX Live, whose `aastex` package
 lags the AAS release (it currently ships `aastex631.cls`). Pinning means your
 local PDF matches what coauthors and the journal see. To update, re-download
-`aastex702.zip` from the AAS page and replace both files in one commit.
+the newest version from the AAS page and replace the stale files.
 
 ---
 
 ## License
 
-Everything in this repository that is mine — the manuscript skeleton, build
-configuration, tooling and docs — is [0BSD](LICENSE): do whatever you like with
+Everything in this repository that is mine (the manuscript skeleton, build
+configuration, tooling and docs) is [0BSD](LICENSE): do whatever you like with
 it, no attribution required.
 
 Three files are vendored from the AASTeX distribution and are **not** covered by

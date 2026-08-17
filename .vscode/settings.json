@@ -61,6 +61,11 @@
   "latex-workshop.intellisense.citation.backend": "bibtex",
   "latex-workshop.latex.bibDirs": ["${workspaceFolder}"],
 
+  // ---- Zotero picker (mblode.zotero, Opt+Shift+Z) ----
+  // Better BibTeX's CAYW endpoint. The extension defaults to format=pandoc,
+  // which inserts [@key]; format=citep asks for \citep{key} instead.
+  "zotero-citation-picker.port": "http://127.0.0.1:23119/better-bibtex/cayw?format=citep",
+
   // ---- LTeX+ grammar ----
   "ltex.language": "en-US",
   // Scope grammar checking to the manuscript: on markdown/json it flags code

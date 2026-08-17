@@ -31,16 +31,13 @@ which pdflatex latexmk bibtex chktex latexindent
 pdflatex --version
 ```
 
-`kpsewhich aastex702.cls` returning nothing is fine — the class is vendored in
+`kpsewhich aastex702.cls` returning nothing is fine, the class is vendored in
 this repo rather than taken from TeX Live.
 
 The full install exists to eliminate `tlmgr install` interruptions mid-deadline.
 If 5.5 GB is unacceptable, `brew install --cask basictex` then
 `sudo tlmgr install collection-latexextra collection-fontsrecommended collection-bibtexextra latexmk latexindent chktex aastex`,
 and budget an hour of iterative "missing package" cycles.
-
-Skip Tectonic here: its biber-oriented bibliography handling adds friction with
-the AAS BibTeX `.bst` for no benefit at these compile times.
 
 ---
 
@@ -70,11 +67,25 @@ Notes:
   they conflict.
 - Install `ltex-plus.vscode-ltex-plus`, not the abandoned `valentjn.vscode-ltex`.
 
-### Keybinding for the Zotero picker
+### Configure the Zotero picker
 
-`mblode.zotero` ships no default binding and its README is unreliable across
-versions, so set it explicitly: `Cmd+K Cmd+S` → search "Zotero" → assign
-`Cmd+Shift+Z` to **Zotero Cite**.
+`mblode.zotero` ships its own bindings: `Opt+Shift+Z` opens the citation picker,
+`Ctrl+Shift+Z` opens the selected item in Zotero, `Ctrl+Opt+Shift+Z` opens its
+PDF. The picker is also on the Command Palette as **Zotero Citation Picker**.
+Rebind via `Cmd+K Cmd+S` if you want something else.
+
+The setting that matters is the output format, and this repo already sets it in
+[.vscode/settings.json](.vscode/settings.json):
+
+```json
+"zotero-citation-picker.port": "http://127.0.0.1:23119/better-bibtex/cayw?format=citep"
+```
+
+Left alone the extension defaults to Pandoc and inserts `[@key]` into your
+`.tex` file, which is not what you want. `format=citep` and `format=citet` are
+aliases for `format=natbib` with the respective command; plain
+`format=natbib&command=<cmd>` covers anything else. Append `&minimize=true` if
+you would rather Zotero not steal focus on every pick.
 
 LaTeX Workshop binds everything else: `Cmd+Opt+B` build, `Cmd+Opt+V` view,
 `Cmd+Opt+J` forward search, `Cmd+Opt+L` log, `Cmd+Click` in the PDF pane for
@@ -86,10 +97,17 @@ reverse search.
 
 ### 3.1 Install Better BibTeX
 
-Requires Zotero 7. Zotero → Tools → Plugins → gear icon → **Install Plugin From
-File** → select the `.xpi` from
+**Zotero 8 and Better BibTeX 9.0.21 or newer.** BBT 9 requires Zotero 8, which
+in turn wants macOS 10.15 or later.
+
+Zotero → Tools → Plugins → gear icon → **Install Plugin From File** → select the
+`.xpi` from
 [retorquere.github.io/zotero-better-bibtex](https://retorquere.github.io/zotero-better-bibtex/).
 Restart Zotero afterwards.
+
+Citation keys live in Zotero's own Citation Key field, which syncs like any
+other field. Your keys therefore travel between machines rather than sitting in
+a local plugin database, and BBT reads and writes them there.
 
 ### 3.2 Getting astronomy metadata in: use the connector
 
@@ -109,27 +127,36 @@ accepts ADS bibcodes directly. On an ADS results page, select records → Export
 **Bibcodes**, then paste the whole list into the identifier box. No connector,
 no per-item clicking, metadata straight from ADS.
 
-**Optional: `zot-nasa-ads`**
-([github.com/samuelyeewl/zot-nasa-ads](https://github.com/samuelyeewl/zot-nasa-ads))
-adds a right-click "Update Metadata from NASA ADS" action that writes the
-bibcode and ADS URL into Extra, given a free ADS API key. Genuinely useful here:
-it upgrades arXiv preprints in your library to their published versions in one
-click, which otherwise means re-saving by hand.
+**No plugin will fix an item after the fact.** Guides still recommend
+[`zot-nasa-ads`](https://github.com/samuelyeewl/zot-nasa-ads) for pulling ADS
+metadata onto an item you already saved; it caps out at
+`strict_max_version: "7.0.*"`, so Zotero refuses to install it. Do not go
+looking for it.
+
+So an item whose Extra is missing `ADS Bibcode:` gets fixed by hand: paste the
+line in yourself, or delete the item and re-save it from the ADS abstract page,
+then refresh the key (§3.3). Promoting a preprint to its published version is
+likewise a re-save.
+
+Only the *citation key* depends on that bibcode. The bibliography itself does
+not: `ads_enrich.py` resolves entries through the DOI and the arXiv eprint as
+well as the bibcode, and takes ADS's published record wholesale (§3.6).
 
 ### 3.3 Citation keys: set the formula, then leave it alone
 
 Keys must be **stable**. A key that regenerates when you edit metadata silently
 breaks every `\citep{}` that used it.
 
-The old advice — writing `Citation Key: X` into an item's Extra field to "pin"
-it — **no longer works.** BBT 9 removed Extra-field pinning and keeps the
-formatter only as a no-op:
+**Every key is pinned.** Zotero has nowhere to record whether a key was pinned
+deliberately, so BBT treats all of them as fixed once written. Two consequences
+worth knowing before you read any tutorial on this: writing `Citation Key: X`
+into an item's Extra field does nothing, and neither does the `$pinned()`
+formatter that older key formulas are built around.
 
 > Pinned citation keys in Extra are no longer supported, but existing formulas
 > may still reference `$pinned()`. Keep this formatter as a no-op.
 
-Instead, three settings under Zotero → Settings → Better BibTeX → **Citation
-keys**:
+Three settings under Zotero → Settings → Better BibTeX → **Citation keys**:
 
 | Setting | Value |
 |---|---|
@@ -145,10 +172,35 @@ Turning off regeneration is the setting that actually protects your citations.
 The separator between alternatives is `|` or `;`; the settings pane validates as
 you type. If `extra('ADS Bibcode')` comes back empty for an item you know has a
 bibcode, check that Extra really contains a line of the form
-`ADS Bibcode: 2024ApJ...961..112S`.
+`ADS Bibcode: 2024ApJ...961..112S`. BBT's own docs only advertise `extra()` for
+`tex.*` fields and a fixed list of CSL names, but the implementation falls back
+to scanning raw Extra lines for `Label: value`, which is why an ad-hoc label
+like `ADS Bibcode` resolves.
 
 Existing items keep whatever key they already have: select them → right-click →
 Better BibTeX → **Refresh** to apply the new formula.
+
+#### The formula gets exactly one shot per item
+
+Keys are pinned and auto-fill is on, so the formula runs *once*, about two
+seconds after an item appears, and whatever it produces is written to the
+Citation Key field and kept.
+
+That is a race against the bibcode. If Extra has no `ADS Bibcode:` line at the
+instant auto-fill runs, because the ADS translator silently fell back to
+Embedded Metadata (§3.2) or because you pasted the bibcode in afterwards, the
+item keeps the `auth.lower + year` fallback key permanently. Nothing revisits it
+on its own, and no plugin will repair it for you (§3.2).
+
+So after adding papers, sort by Date Added and check the keys. Anything that
+should be a bibcode and is not: fix Extra, then right-click → Better BibTeX →
+**Refresh**. Do this *before* you cite the item: Refresh changes the key, and a
+key that changes after it is in `ms.tex` is exactly the silent `\citep{}` break
+this section exists to prevent.
+
+Right-click the column headers in the items list and enable **Citation key** to
+make this a glance rather than a per-item click. BBT also keeps the key at the
+top of the item pane for whatever item is selected.
 
 ### 3.4 Export settings
 
@@ -160,9 +212,10 @@ Zotero → Settings → Better BibTeX → Export:
   `M\"uller`, which BibTeX's older `.bst` machinery handles reliably.
 - **Automatic export: On change**, not "on idle", so the `.bib` is current the
   moment you add a paper.
-- **Turn journal abbreviation OFF** if it is set to `auto`. Zotero's
-  auto-abbreviation produces `Astrophys. J.`, which collides with the journal
-  macros `ads_enrich.py` installs (§3.6).
+- **Journal abbreviation mode:** leave it on the default, *always use the Zotero
+  abbreviation field*. There is no "off" setting; the other two modes reach for
+  Zotero's auto-abbreviation, which produces `Astrophys. J.` and collides with
+  the journal macros `ads_enrich.py` installs (§3.6).
 
 Use **Better BibTeX**, not Better BibLaTeX: the BibLaTeX exporter emits `date`
 where BibTeX wants `year`, and `aasjournalv7.1.bst` will not read it.
@@ -233,10 +286,22 @@ what the class defines: `make check-macros`.
 ### 3.7 Cite-as-you-write
 
 With Zotero running, `mblode.zotero` queries Better BibTeX's CAYW endpoint on
-`localhost:23119` and inserts `\citep{key}` from a search dialog — Command
-Palette → **Zotero Cite**, or the `Cmd+Shift+Z` binding from section 2. If the
-picker fails, LaTeX Workshop's own `\citep{` IntelliSense is the fallback and
-needs nothing running.
+`127.0.0.1:23119` and inserts `\citep{key}` from a search dialog: `Opt+Shift+Z`,
+or Command Palette → **Zotero Citation Picker**. The `format=citep` in section 2
+is what makes it emit `\citep{}` rather than Pandoc brackets.
+
+CAYW is a Better BibTeX feature, not a Zotero one, so it needs both BBT loaded
+and Zotero running. To check the endpoint without popping the picker:
+
+```bash
+curl 'http://127.0.0.1:23119/better-bibtex/cayw?probe=1'   # answers: ready
+```
+
+A picker that hangs or returns nothing on a BBT older than 9.0.21 is that
+version, not your configuration (§3.1).
+
+If the picker fails, LaTeX Workshop's own `\citep{` IntelliSense is the fallback
+and needs nothing running.
 
 ---
 
@@ -255,8 +320,10 @@ Checklist:
 - [ ] `Cmd+Click` in the PDF jumps back to source
 - [ ] Typing `\citep{` offers completions from `references.bib`
 - [ ] Adding a paper in Zotero updates `references.zotero.bib` within a few seconds
+- [ ] A paper saved from an ADS abstract page gets a *bibcode* citation key, not
+      an `auth+year` one (§3.3)
 - [ ] `make bib` then carries it into `references.bib` with an ADS-quality record
-- [ ] `Cmd+Shift+Z` opens the Zotero picker and inserts a key
+- [ ] `Opt+Shift+Z` opens the Zotero picker and inserts a `\citep{}`, not `[@key]`
 - [ ] Citations render author-year, and the reference list uses journal abbreviations
 
 If citations come out as `??` and the log has no obvious BibTeX error, check
