@@ -1,0 +1,76 @@
+Zero-Clause BSD (0BSD)
+
+Copyright (C) 2026 by Donovan Schlekat <dschlekat@unc.edu>
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+
+
+===============================================================================
+THIRD-PARTY FILES
+===============================================================================
+
+The license above covers this repository's own contents -- the manuscript
+skeleton, build configuration, tooling and documentation. It does NOT cover the
+three files below, which are vendored from the AASTeX distribution and carry
+their own terms. Their original headers are intact; nothing here modifies or
+relicenses them.
+
+Upstream: https://journals.aas.org/aastex-package-for-manuscript-preparation/
+
+
+-------------------------------------------------------------------------------
+aastex702.cls -- AASTeX v7.0.2 document class
+-------------------------------------------------------------------------------
+
+    Copyright 2025 American Astronomical Society
+
+    This work may be distributed and/or modified under the conditions of the
+    LaTeX Project Public License, either version 1.3c of this license or (at
+    your option) any later version. The latest version of this license is in
+    http://www.latex-project.org/lppl.txt and version 1.3 or later is part of
+    all distributions of LaTeX.
+
+Incorporates work by, per the file's own credits: the Aptara Technology Team;
+Amy Hendrickson (aastex631.cls, and the rewrite of emulateapj.cls); Alexey
+Vikhlinin (emulateapj.cls); Chris Biemesderfer (original LaTeX 2.09 style);
+A. Ogawa (LaTeX2e adaptation); W. E. Baxter (page grid package, licensed
+portions); and the RevTeX4-2 macros.
+
+
+-------------------------------------------------------------------------------
+aasjournalv7.1.bst -- AAS journal BibTeX style
+-------------------------------------------------------------------------------
+
+Derived from Patrick W. Daly's natbib/custom-bib styles and revised by Amy
+Hendrickson and Aptara for the AAS journals. The file carries this notice
+verbatim:
+
+    NOTICE:
+    This file may be used for non-profit purposes.
+    It may not be distributed in exchange for money,
+      other than distribution costs.
+
+    The author provides it `as is' and does not guarantee it in any way.
+
+    Copyright (C) 1994-98 Patrick W. Daly
+
+Note that this is a non-commercial restriction and therefore not an
+open-source license. It is reproduced here rather than overridden.
+
+
+-------------------------------------------------------------------------------
+orcid-ID.png -- ORCID iD icon
+-------------------------------------------------------------------------------
+
+Ships with the AASTeX distribution and is loaded by aastex702.cls to render the
+icon beside author names. The ORCID iD icon is a mark of ORCID, Inc.; its use is
+governed by ORCID's trademark and brand guidelines, https://orcid.org/trademark-and-id-display-guidelines

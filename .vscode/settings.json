@@ -1,0 +1,95 @@
+{
+  // ---- Build ----
+  "latex-workshop.latex.outDir": "%DIR%/build",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-pdf",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [{ "name": "latexmk", "tools": ["latexmk"] }],
+  "latex-workshop.latex.recipe.default": "latexmk",
+
+  // Set to "never" if you switch to terminal watch mode (`latexmk -pvc`).
+  "latex-workshop.latex.autoBuild.run": "onSave",
+
+  // Never auto-clean: it deletes the .aux/.bbl that make incremental builds fast.
+  "latex-workshop.latex.autoClean.run": "never",
+
+  // ---- Viewer + SyncTeX ----
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.synctex.afterBuild.enabled": true,
+
+  // ---- Diagnostics ----
+  "latex-workshop.linting.chktex.enabled": true,
+  // -n8: chktex's dash-length check fires on every ORCID digit string. Drop it
+  // if you want real en-dash/em-dash checking on prose.
+  "latex-workshop.linting.chktex.exec.args": ["-wall", "-n22", "-n30", "-n8", "-e16", "-q"],
+  "latex-workshop.message.badbox.show": false,
+  "latex-workshop.message.error.show": true,
+
+  // ---- Formatting (opt-in; latexindent can reflow aggressively) ----
+  "latex-workshop.formatting.latex": "latexindent",
+  "[latex]": {
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "on",
+    "editor.wordWrapColumn": 100,
+    "editor.rulers": [100],
+    "editor.tabSize": 2,
+    "editor.quickSuggestions": { "comments": false, "strings": false, "other": true }
+  },
+  "[bibtex]": {
+    "editor.wordWrap": "off",
+    "editor.tabSize": 2
+  },
+
+  // ---- Git ----
+  // The Overleaf git bridge rate-limits automated polling. Keep autofetch off.
+  "git.autofetch": false,
+  "gitlens.autolinks": [],
+
+  // ---- Bibliography IntelliSense ----
+  "latex-workshop.intellisense.citation.backend": "bibtex",
+  "latex-workshop.latex.bibDirs": ["${workspaceFolder}"],
+
+  // ---- LTeX+ grammar ----
+  "ltex.language": "en-US",
+  // Scope grammar checking to the manuscript: on markdown/json it flags code
+  // spans and config keys, training you to ignore the squiggles.
+  "ltex.enabled": ["latex", "tex", "bibtex"],
+  "ltex.latex.commands": {
+    "\\citep{}": "dummy",
+    "\\citet{}": "dummy",
+    "\\citealt{}": "dummy",
+    "\\ref{}": "dummy",
+    "\\autoref{}": "dummy",
+    "\\eqref{}": "dummy",
+    "\\label{}": "ignore",
+    "\\software{}": "ignore",
+    "\\facility{}": "ignore",
+    "\\facilities{}": "ignore",
+    "\\dataset{}": "ignore"
+  },
+  "ltex.dictionary": {
+    "en-US": ["AASTeX", "SyncTeX", "coadd", "coadds", "astrometric", "photometric"]
+  },
+
+  // ---- Search / explorer noise ----
+  "files.exclude": {
+    "**/build": true
+  },
+  "search.exclude": {
+    "**/build": true,
+    "**/*.cls": true,
+    "**/*.bst": true
+  }
+}

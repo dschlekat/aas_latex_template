@@ -1,0 +1,75 @@
+%% references.zotero.bib -- SOURCE FILE, the Better BibTeX auto-export target.
+%%
+%% NEVER EDIT BY HAND: BBT overwrites it without asking. Once the Zotero
+%% collection is wired up (SETUP.md 3.5) the example entries below disappear.
+%% Commit both .bib files: they are build inputs and the journal needs them.
+%%
+%%   references.zotero.bib --(uv run tools/ads_enrich.py)--> references.bib
+%%                                            [GENERATED] --> \bibliography{}
+%%
+%% Journal macros (\apj, \aj, \mnras) are NOT fixed here -- the connector writes
+%% full journal names and ads_enrich.py converts them downstream (SETUP.md 3.6).
+%%
+%% Getting entries in: the browser connector on an ADS abstract page writes an
+%% `ADS Bibcode:' line into Extra, which the BBT citation-key formula reads
+%% (SETUP.md 3.3). If it is missing, the ADS translator broke and the connector
+%% fell back to generic Embedded Metadata -- re-save the item. For batches use
+%% ADS -> Export -> Bibcodes with Zotero's Add Item by Identifier; bulk
+%% connector saves from search-result pages attach PDFs to the wrong records.
+%%
+%% The entries below are real ADS records, so a fresh clone compiles.
+
+@ARTICLE{1996A&AS..117..393B,
+       author = {{Bertin}, E. and {Arnouts}, S.},
+        title = "{SExtractor: Software for source extraction.}",
+      journal = {\aaps},
+         year = "1996",
+        month = "Jun",
+       volume = {117},
+        pages = {393-404},
+          doi = {10.1051/aas:1996164},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/1996A&AS..117..393B},
+}
+
+@ARTICLE{2015ApJ...805...23C,
+       author = {{Corrales}, Lia},
+        title = "{X-Ray Scattering Echoes and Ghost Halos from the Intergalactic Medium: Relation to the Nature of AGN Variability}",
+      journal = {\apj},
+         year = "2015",
+        month = "May",
+       volume = {805},
+       number = {1},
+          eid = {23},
+        pages = {23},
+          doi = {10.1088/0004-637X/805/1/23},
+archivePrefix = {arXiv},
+       eprint = {1503.01475},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2015ApJ...805...23C},
+}
+
+@ARTICLE{2018ApJ...868L..33L,
+       author = {{Li}, Leping and {Zhang}, Jun and {Peter}, Hardi and
+         {Chitta}, Lakshmi Pradeep and {Su}, Jiangtao and {Song}, Hongqiang and
+         {Xia}, Chun and {Hou}, Yijun},
+        title = "{Quasi-periodic Fast Propagating Magnetoacoustic Waves during the Magnetic Reconnection Between Solar Coronal Loops}",
+      journal = {\apj},
+         year = "2018",
+        month = "Dec",
+       volume = {868},
+       number = {2},
+          eid = {L33},
+        pages = {L33},
+          doi = {10.3847/2041-8213/aaf167},
+archivePrefix = {arXiv},
+       eprint = {1811.08553},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2018ApJ...868L..33L},
+}
+
+@BOOK{lamport94,
+       author = {{Lamport}, L.},
+        title = "{LaTeX: A Document Preparation System}",
+    publisher = {Addison-Wesley Professional},
+         year = "1994",
+      edition = {2},
+         isbn = {0201529831}
+}

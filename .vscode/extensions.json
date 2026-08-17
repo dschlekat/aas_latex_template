@@ -1,0 +1,27 @@
+{
+  "recommendations": [
+    // Essential: build recipes, PDF viewer, SyncTeX, \cite/\ref IntelliSense,
+    // ChkTeX linting, latexindent formatting.
+    "james-yu.latex-workshop",
+
+    // Strongly recommended
+    "mblode.zotero",
+    "ltex-plus.vscode-ltex-plus",
+    "streetsidesoftware.code-spell-checker",
+    // Opt+Q paragraph reflow. This is the maintained, signed fork; the original
+    // stkb.rewrap now fails VS Code's extension signature check.
+    "dnut.rewrap-revived",
+
+    // Optional
+    "tecosaur.latex-utilities",
+    "eamodio.gitlens"
+  ],
+  "unwantedRecommendations": [
+    // Conflicts with LaTeX Workshop -- do not install both.
+    "efoerster.texlab",
+    // Superseded by the maintained ltex-plus fork above.
+    "valentjn.vscode-ltex",
+    // Unsigned; superseded by dnut.rewrap-revived above.
+    "stkb.rewrap"
+  ]
+}

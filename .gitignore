@@ -1,0 +1,44 @@
+# Agent Artifacts
+CLAUDE.md
+PLAN.md
+REVIEWS.md
+
+# LaTeX build output
+build/
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.spl
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.run.xml
+*.bcf
+
+# Full-resolution figure originals.
+figures/full/*
+!figures/full/.gitkeep
+
+# arxiv-latex-cleaner output
+*_arXiv/
+
+# ADS lookup cache for tools/ads_enrich.py.
+.ads-cache.json
+
+# Auto-enrichment flag (`make auto-on`).
+.ads-auto
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
