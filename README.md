@@ -1,12 +1,30 @@
 # AASTeX v7 Paper Template
 
-Local-first LaTeX project template for AAS-journal manuscripts: macOS, VS Code
-and Zotero 8, compiling with `latexmk`/`pdflatex` against a vendored AASTeX v7
-class.
-
-One-time machine and GUI setup lives in [SETUP.md](SETUP.md).
+Local-first LaTeX project template for AAS-journal manuscripts on macOS, built
+around VS Code and Zotero 8. It compiles with `latexmk` and `pdflatex` against a
+vendored AASTeX v7 class, and generates its bibliography from a Better BibTeX
+export enriched with NASA ADS records.
 
 ---
+
+## Requirements
+
+- macOS 10.15 or later
+- MacTeX (`mactex-no-gui`), which provides `pdflatex`, `latexmk`, `bibtex`,
+  `chktex` and `latexindent`
+- VS Code with LaTeX Workshop (`james-yu.latex-workshop`)
+- Zotero 8 with Better BibTeX 9.0.21 or newer
+- `uv`, which resolves `bibtexparser~=1.4` and Python 3.11 or newer from the
+  PEP 723 header in `tools/ads_enrich.py`
+- Optional: an ADS API token in `ADS_DEV_KEY`. Without one, `make bib` degrades
+  to `--offline`.
+
+## Install
+
+Install the toolchain and configure Zotero once per machine before the first
+build. The project itself has no install step: the AASTeX class and the BibTeX
+style are vendored, and `tools/ads_enrich.py` resolves its dependencies at run
+time.
 
 ## Quick start
 
@@ -26,10 +44,13 @@ make auto-status
 make auto-off       # back to explicit `make bib` (the default)
 ```
 
-In VS Code, `Cmd+Opt+B` builds and `Cmd+Opt+V` opens the PDF in a tab. Building
-on save is already configured — if you switch to `make watch`, set
+One-time machine and GUI setup lives in [SETUP.md](SETUP.md).
+
+In VS Code, `Cmd+Opt+B` builds and `Cmd+Opt+V` opens the PDF in a tab.
+Build-on-save is configured. Before switching to `make watch`, set
 `latex-workshop.latex.autoBuild.run` to `"never"` in
-[.vscode/settings.json](.vscode/settings.json) or you get duplicated compiles.
+[.vscode/settings.json](.vscode/settings.json), or both drivers compile the same
+file.
 
 ---
 
@@ -37,35 +58,35 @@ on save is already configured — if you switch to `make watch`, set
 
 ```text
 .
-├── ms.tex                  # main manuscript
-├── Makefile                # build, bibliography, macro check
-├── LICENSE                 # 0BSD, plus terms for the vendored AAS files
-├── aastex702.cls           # vendored AASTeX v7.0.2 class (June 2026 release)
-├── aasjournalv7.1.bst      # vendored AAS BibTeX style
-├── orcid-ID.png            # ORCID icon rendered next to \author names
-├── references.zotero.bib   # Better BibTeX auto-export target -- SOURCE
-├── references.bib          # GENERATED from the above -- what ms.tex reads
-├── tools/
-│   └── ads_enrich.py       # references.zotero.bib -> references.bib, via ADS
-├── figures/                # publication-resolution figures (committed)
-│   └── full/               # full-res originals (gitignored)
-├── sections/               # optional \input targets
-├── .latexmkrc              # build driver config, Overleaf-compatible
-├── cspell.json             # project spell-check dictionary
-├── .vscode/                # LaTeX Workshop, ChkTeX, LTeX+, recommended extensions
-└── build/                  # all aux output, gitignored
+|-- ms.tex                  # main manuscript
+|-- Makefile                # build, bibliography, macro check
+|-- LICENSE                 # 0BSD, plus terms for the vendored AAS files
+|-- aastex702.cls           # vendored AASTeX v7.0.2 class (June 2026 release)
+|-- aasjournalv7.1.bst      # vendored AAS BibTeX style
+|-- orcid-ID.png            # ORCID icon rendered next to \author names
+|-- references.zotero.bib   # Better BibTeX auto-export target -- SOURCE
+|-- references.bib          # GENERATED from the above -- what ms.tex reads
+|-- tools/
+|   `-- ads_enrich.py       # references.zotero.bib -> references.bib, via ADS
+|-- figures/                # publication-resolution figures (committed)
+|   `-- full/               # full-res originals (gitignored)
+|-- sections/               # optional \input targets
+|-- .latexmkrc              # build driver config, Overleaf-compatible
+|-- cspell.json             # project spell-check dictionary
+|-- .vscode/                # LaTeX Workshop, ChkTeX, LTeX+, recommended extensions
+`-- build/                  # all aux output, gitignored
 ```
 
 ## Starting a new paper from this template
 
-1. Click **Use this template** on GitHub (or copy the directory, or `git clone`
-   and `rm -rf .git && git init`).
+1. Click "Use this template" on GitHub, copy the directory, or `git clone` and
+   then run `rm -rf .git && git init`.
 2. Replace the placeholder front matter in [ms.tex](ms.tex): `\title`,
    `\author`/`\affiliation`/`\email`, `\shorttitle`, `\shortauthors`,
    `\keywords`. Every author needs an `\email` or the compile hard-errors.
 3. Delete the example body sections and the `\todo` placeholders.
 4. Point the Better BibTeX auto-export at `references.zotero.bib`
-   ([SETUP.md](SETUP.md) section 3). The example entries are placeholders and
+   ([SETUP.md](SETUP.md) section 3.5). The example entries are placeholders and
    will be overwritten.
 5. Add instrument, survey, and software names to `cspell.json`, and to
    `ltex.dictionary` in `.vscode/settings.json`.
@@ -74,60 +95,29 @@ on save is already configured — if you switch to `make watch`, set
 
 ## House rules
 
-**One sentence per line.** No hard-wrapping mid-sentence. Git diffs then show
-which sentence changed rather than a reflowed paragraph, which is what makes
-reconciling browser-side Overleaf edits tractable. `Opt+Q` reflows a paragraph
-when you do need it.
-
-**Never auto-clean.** `latex-workshop.latex.autoClean.run` is `"never"` on
-purpose: the `.aux`/`.bbl` in `build/` are what make incremental builds instant.
-
-**BibTeX, not biblatex.** AASTeX v7 mandates BibTeX + natbib +
-`aasjournalv7.1.bst`, which biblatex/biber cannot drive. On the Zotero side that
-means the **Better BibTeX** exporter, not Better BibLaTeX — BibLaTeX emits
-`date` where BibTeX wants `year`.
-
-**Check a new paper's citation key before you cite it.** Keys are pinned the
-moment BBT writes them, about two seconds after an item lands in Zotero, so the
-key formula gets one shot per item. A paper saved from ADS without an
-`ADS Bibcode:` line in its Extra field keeps an `auth+year` fallback key
-permanently unless you fix Extra and right-click → Better BibTeX → **Refresh**.
-Doing that *after* the key is in `ms.tex` is how you silently break a `\citep{}`
-([SETUP.md](SETUP.md) section 3.3).
-
-**Two `.bib` files, one direction of flow.** Better BibTeX writes
-`references.zotero.bib`; `tools/ads_enrich.py` generates `references.bib` from
-it. Edit neither by hand. Commit both: they are build inputs and the journal
-needs them.
-
-```text
-Zotero  ──BBT auto-export──▶  references.zotero.bib  ──make bib──▶  references.bib
-```
-
-**`references.bib` does not refresh on its own by default.** Add a paper in
-Zotero, cite it, build, and you get `??` until you run `make bib` — the Zotero
-half of the chain is automatic, the enrichment half is not. `make auto-on` makes
-every build close the gap, at the cost of a `uv run` (~200-400 ms) on the builds
-where Zotero actually exported something. Builds where nothing changed spawn no
-process at all.
-
-Auto-mode is a gitignored `.ads-auto` file that `.latexmkrc` checks, so the
-editor, the terminal and make all agree, and it stays inert on Overleaf. One
-gap: `make watch` reads `.latexmkrc` once at startup and misses papers added
-mid-session.
-
-**Every `\author` needs an `\email`.** AASTeX 7.0.2 hard-errors without one and
-stops the compile *before* BibTeX runs, so the symptom is unresolved `??`
-citations rather than a message about email.
-
-**pdflatex, not lualatex/xelatex.** AAS production does not want the others.
-
-**Keep `-outdir` out of `.latexmkrc`.** Overleaf reads `latexmkrc` but breaks on
-a redirected output directory, so the `build/` redirect lives in the VS Code
-tool args and in the `-outdir` flag you type.
-
-**Portability.** Relative paths, forward slashes, ASCII filenames, no
-`-shell-escape` dependencies in anything shared.
+- One sentence per line in `ms.tex`, with no hard-wrapping mid-sentence, so git
+  diffs show which sentence changed. `Opt+Q` reflows a paragraph. The Markdown
+  docs are wrapped at 80 columns instead.
+- No `latex-workshop.latex.autoClean.run`; the `.aux` and `.bbl` files in `build/`
+  keep incremental builds at about 0.1 s.
+- BibTeX and natbib with `aasjournalv7.1.bst`, which biblatex and biber cannot
+  drive. On the Zotero side that means Better BibTeX, not Better BibLaTeX, which
+  emits `date` where BibTeX wants `year`.
+- Edit neither `.bib` file by hand. Better BibTeX writes `references.zotero.bib`,
+  `tools/ads_enrich.py` generates `references.bib` from it, and both are
+  committed.
+- `references.bib` does not refresh on its own. Add a paper in Zotero, cite it,
+  and the build renders `??` until `make bib` runs. `make auto-on` closes the gap
+  on every build for one `uv run` (about 200-400 ms) per changed export, except
+  under `make watch`, which reads `.latexmkrc` once at startup.
+- An `\email` for every `\author`. AASTeX 7.0.2 hard-errors without one and stops
+  the compile before BibTeX runs, so the symptom is unresolved `??` citations.
+- `pdflatex` only, not lualatex or xelatex.
+- No `-outdir` in `.latexmkrc`; Overleaf breaks on a redirected output directory,
+  so the `build/` redirect lives in the VS Code tool arguments and in the
+  `-outdir` flag.
+- Relative paths, forward slashes, ASCII filenames, and no `-shell-escape`
+  dependency in anything shared.
 
 ---
 
@@ -137,8 +127,8 @@ tool args and in the `-outdir` flag you type.
 |---|---|
 | Build | `Cmd+Opt+B` |
 | View PDF | `Cmd+Opt+V` |
-| Forward search (source → PDF) | `Cmd+Opt+J` |
-| Reverse search (PDF → source) | `Cmd+Click` in the PDF pane |
+| Forward search (source to PDF) | `Cmd+Opt+J` |
+| Reverse search (PDF to source) | `Cmd+Click` in the PDF pane |
 | Show compile log | `Cmd+Opt+L` |
 | Reflow paragraph | `Opt+Q` |
 | Cite from Zotero | `Opt+Shift+Z` |
@@ -171,21 +161,19 @@ article in that list means a bad DOI.
 | `aastex702.cls` | 7.0.2 (June 2026) | [AAS AASTeX page](https://journals.aas.org/aastex-package-for-manuscript-preparation/) |
 | `aasjournalv7.1.bst` | v7.1 (June 2026) | same |
 
-Vendored deliberately rather than taken from TeX Live, whose `aastex` package
-lags the AAS release (it currently ships `aastex631.cls`). Pinning means your
-local PDF matches what coauthors and the journal see. To update, re-download
-the newest version from the AAS page and replace the stale files.
+Both files are vendored rather than taken from TeX Live, whose `aastex` package
+lags the AAS release and currently ships `aastex631.cls`. To update, download the
+current files from the AAS page and replace both in one commit.
 
 ---
 
 ## License
 
-Everything in this repository that is mine (the manuscript skeleton, build
-configuration, tooling and docs) is [0BSD](LICENSE): do whatever you like with
-it, no attribution required.
+The manuscript skeleton, build configuration, tooling and documentation are
+[0BSD](LICENSE): use them for anything, with no attribution required.
 
-Three files are vendored from the AASTeX distribution and are **not** covered by
-that: `aastex702.cls` (AAS, LPPL 1.3c), `aasjournalv7.1.bst` (Patrick W. Daly,
-non-commercial use only) and `orcid-ID.png` (ORCID's mark). [LICENSE](LICENSE)
-reproduces their terms in full. The `.bst` restriction is the one to notice if
-you are doing anything commercial with a copy of this repo.
+Three files vendored from the AASTeX distribution are not covered by that
+license: `aastex702.cls` (AAS, LPPL 1.3c), `aasjournalv7.1.bst` (Patrick W.
+Daly, non-commercial use only) and `orcid-ID.png` (ORCID's mark).
+[LICENSE](LICENSE) reproduces their terms in full. The `.bst` restriction is the
+one that matters for commercial use of a copy of this repository.
