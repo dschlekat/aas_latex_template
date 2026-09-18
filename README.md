@@ -1,9 +1,12 @@
 # AASTeX v7 Paper Template
 
 Local-first LaTeX project template for AAS-journal manuscripts on macOS, built
-around VS Code and Zotero 8. It compiles with `latexmk` and `pdflatex` against a
-vendored AASTeX v7 class, and generates its bibliography from a Better BibTeX
+around VS Code and Zotero 8. Compiles with `latexmk` and `pdflatex` against a
+vendored AASTeX v7 class and generates its bibliography from a Better BibTeX
 export enriched with NASA ADS records.
+
+> [!Note]
+> This repo was created largely with the use of LLMs.
 
 ---
 
